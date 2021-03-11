@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+  <ValueLookup id="dhcp.failover.mode" desiredValue="1" undefinedState="Error">
+    <Lookups>
+      <SingleInt state="Ok" value="2">LoadBalance</SingleInt>
+	  <SingleInt state="Ok" value="1">HotStandby</SingleInt>
+    </Lookups>
+  </ValueLookup>

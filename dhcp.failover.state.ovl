@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+  <ValueLookup id="dhcp.failover.state" desiredValue="1" undefinedState="Error">
+    <Lookups>
+      <SingleInt state="Ok" value="1">Normal</SingleInt>
+      <SingleInt state="Error" value="2">Communication interrupted</SingleInt>
+      <SingleInt state="Error" value="3">Partner Down</SingleInt>
+    </Lookups>
+  </ValueLookup>
