@@ -7,8 +7,8 @@ Jannos-443
 
 ## Project Details
 
-Monitors DHCP Scopes (PercentageInUse, AddressesFree, AddressesInUse and ReservedAddresses)
-Monitors DHCP Failover State and Mode
+- Monitors DHCP Scopes (PercentageInUse, AddressesFree, AddressesInUse and ReservedAddresses)
+- Monitors DHCP Failover State and Mode
 
 ## HOW TO
 
