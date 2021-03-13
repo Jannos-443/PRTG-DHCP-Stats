@@ -1,6 +1,6 @@
 <#
     .SYNOPSIS
-    Monitors DHCP Scopes (PercentageInUse, AddressesFree and AddressesInUse)
+    Monitors DHCP Scopes (PercentageInUse, AddressesFree, AddressesInUse and ReservedAddresses)
     Monitors DHCP Failover State and Mode
 
     .DESCRIPTION
@@ -19,8 +19,25 @@
     .PARAMETER DHCPServer
     The hostname or IP address of the Windows machine to be checked. Should be set to %host in the PRTG parameter configuration.
 
+    .PARAMETER PercentageInUse
+    Shows the percentage of used IP Adresses per scope. 
+    - Default is $true
+
     .PARAMETER CheckFailOver
-    Check DHCP Failover State and Mode? Default is $true
+    Shows DHCP Failover State and Mode. 
+    - Default is $false
+
+    .PARAMETER AddressesFree
+    Shows the Free Addresses per scope. 
+    - Default is $false
+
+    .PARAMETER AddressesInUse
+    Shows the Addresses in Use per scope. 
+    - Default is $false
+
+    .PARAMETER ReservedAddress
+    Shows the Reserved Addresses per scope.
+    - Default is $false
 
     .PARAMETER IgnorePattern
     Regular expression to describe the DHCP Scope ID for Exampe "192.168.2.0"
@@ -33,10 +50,10 @@
 
     .EXAMPLE
     Sample call from PRTG
-    PRTG-DHCP-Stats.ps1 -DHCPServer DHCP-Sever.contorso.com -CheckFailOver:$false
+    PRTG-DHCP-Stats.ps1 -DHCPServer "DHCP-Sever.contorso.com" -CheckFailOver -AddressesFree
 
     .NOTES
-    This script is based on the sample by Paessler (https://kb.paessler.com/en/topic/67869-auto-starting-services) and debold (https://github.com/debold/PRTG-WindowsServices)
+    This script is based on the following script https://github.com/sredlin/PRTG/tree/master/DHCP%20Scope
 
     Author:  Jannos-443
     https://github.com/Jannos-443/PRTG-DHCP-Stats
