@@ -151,6 +151,7 @@ if($CheckFailOver)
     {
         'Normal' { $dhcpstate = 1 }
         'Communication interrupted' { $dhcpstate = 2}
+        'CommunicationInterrupted' { $dhcpstate = 2}
         'Partner Down' { $dhcpstate = 3}
         default { $dhcpstate = 0 }
     }
