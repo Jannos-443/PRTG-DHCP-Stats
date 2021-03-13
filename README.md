@@ -7,8 +7,8 @@ Jannos-443
 
 ## Project Details
 
- Monitors DHCP Scopes (PercentageInUse, AddressesFree and AddressesInUse)
- Monitors DHCP Failover State and Mode
+Monitors DHCP Scopes (PercentageInUse, AddressesFree, AddressesInUse and ReservedAddresses)
+Monitors DHCP Failover State and Mode
 
 ## HOW TO
 
@@ -23,6 +23,23 @@ Jannos-443
     + Security Context: Use Windows credentials of parent device
 
 4. Set the "$IgnorePattern" or "$IgnoreScript" parameter to Exclude DHCP Scopes if needed
+
+5. Set additionally parameter if needed.
+   - "-PercentageInUse" (default = enabled)
+     Shows the percentage of used IP Adresses per scope. 
+   
+   - "-CheckFailOver"
+   Shows DHCP Failover State and Mode. 
+
+   - "-AddressesFree"
+    Shows the Free Addresses per scope. 
+
+   - "-AddressesInUse"
+    Shows the Addresses in Use per scope. 
+
+   - "-ReservedAddress"
+    Shows the Reserved Addresses per scope.
+
 
 ## Examples
 ![PRTG-DHCP-Stats](media/Example_OK.png)
