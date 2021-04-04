@@ -1,4 +1,4 @@
-<#
+﻿<#
     .SYNOPSIS
     Monitors DHCP Scopes (PercentageInUse, AddressesFree, AddressesInUse and ReservedAddresses)
     Monitors DHCP Failover State and Mode
@@ -16,6 +16,8 @@
     + Parameters: -DHCPServer %host or -DHCPServer DHCP-Server
     + Security Context: Use Windows credentials of parent device
   
+    The running user needs "DHCP Users" AD Permission to read the DHCP Stats
+
     .PARAMETER DHCPServer
     The hostname or IP address of the Windows machine to be checked. Should be set to %host in the PRTG parameter configuration.
 
