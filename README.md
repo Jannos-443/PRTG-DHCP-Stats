@@ -21,10 +21,12 @@ Jannos-443
 4. create a "EXE/Script Advanced" sensor. Choose this script from the dropdown and set at least:
     + Parameters: -DHCPServer %host or -DHCPServer DHCP-Server
     + Security Context: Use Windows credentials of parent device
+    + User needs "DHCP Users" AD Permission
+    + ![PRTG-DHCP-Stats](media/dhcp-group.png)
 
-4. Set the "$IgnorePattern" or "$IgnoreScript" parameter to Exclude DHCP Scopes if needed
+5. Set the "$IgnorePattern" or "$IgnoreScript" parameter to Exclude DHCP Scopes if needed
 
-5. Set additionally parameter if needed.
+6. Set additionally parameter if needed.
    - "-PercentageInUse" (default = enabled)
      Shows the percentage of used IP Adresses per scope. 
    
