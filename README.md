@@ -18,7 +18,7 @@ Jannos-443
 
 3. Run PRTG Lookup File Reload
 
-4. Install `DHCP-Servertools` on the PRTG Probe
+4. Install `DHCP-Servertools` on the PRTG Probe (DHCP Powershell Module)
 
    ![PRTG-DHCP-Stats](media/dhcp-servertools.png)
 
