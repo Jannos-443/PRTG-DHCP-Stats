@@ -11,7 +11,8 @@
     1. Copy this script to the PRTG probe EXE scripts folder (C:\Program Files (x86)\PRTG Network Monitor\Custom Sensors\EXEXML)
     2. Place the lookup File "dhcp.failover.mode.ovl" "dhcp.failover.state.ovl" under (C:\Program Files (x86)\PRTG Network Monitor\lookups\custom)
     3. Run PRTG Lookup File Reload
-    4. create a "EXE/Script Advanced" sensor. Choose this script from the dropdown and set at least:
+    4. Install DHCP-Servertools on the PRTG Probe (DHCP Powershell Module)
+    5. create a "EXE/Script Advanced" sensor. Choose this script from the dropdown and set at least:
 
     + Parameters: -DHCPServer %host or -DHCPServer DHCP-Server
     + Security Context: Use Windows credentials of parent device
