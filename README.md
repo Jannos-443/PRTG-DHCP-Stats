@@ -12,21 +12,24 @@ Jannos-443
 
 ## HOW TO
 
-1. Place "PRTG-DHCP-Stats.ps1" under "C:\Program Files (x86)\PRTG Network Monitor\Custom Sensors\EXEXML"
+1. Place `PRTG-DHCP-Stats.ps1` under `C:\Program Files (x86)\PRTG Network Monitor\Custom Sensors\EXEXML`
 
-2. Place the lookup File "dhcp.failover.mode.ovl" "dhcp.failover.state.ovl" under (C:\Program Files (x86)\PRTG Network Monitor\lookups\custom)
+2. Place the lookup File `dhcp.failover.mode.ovl` `dhcp.failover.state.ovl` under `C:\Program Files (x86)\PRTG Network Monitor\lookups\custom`
 
-3. Run PRTG Lookup File Reload
+3. Install `DHCP-Servertools` on the PRTG Probe
 
-4. create a "EXE/Script Advanced" sensor. Choose this script from the dropdown and set at least:
+   ![PRTG-DHCP-Stats](media/dhcp-servertools.png)
+4. Run PRTG Lookup File Reload
+
+5. create a "EXE/Script Advanced" sensor. Choose this script from the dropdown and set at least:
     + Parameters: -DHCPServer %host or -DHCPServer DHCP-Server
     + Security Context: Use Windows credentials of parent device
     + User needs "DHCP Users" AD Permission
     + ![PRTG-DHCP-Stats](media/dhcp-group.png)
 
-5. Set the "$IgnorePattern" or "$IgnoreScript" parameter to Exclude DHCP Scopes if needed
+6. Set the **$IgnorePattern** or **$IgnoreScript** parameter to Exclude DHCP Scopes if needed
 
-6. Set additionally parameter if needed.
+7. Set additionally parameter if needed.
    - "-PercentageInUse" (default = enabled)
      Shows the percentage of used IP Adresses per scope. 
    
