@@ -16,10 +16,11 @@ Jannos-443
 
 2. Place the lookup File `dhcp.failover.mode.ovl` `dhcp.failover.state.ovl` under `C:\Program Files (x86)\PRTG Network Monitor\lookups\custom`
 
-3. Install `DHCP-Servertools` on the PRTG Probe
+3. Run PRTG Lookup File Reload
+
+4. Install `DHCP-Servertools` on the PRTG Probe
 
    ![PRTG-DHCP-Stats](media/dhcp-servertools.png)
-4. Run PRTG Lookup File Reload
 
 5. create a "EXE/Script Advanced" sensor. Choose this script from the dropdown and set at least:
     + Parameters: -DHCPServer %host or -DHCPServer DHCP-Server
