@@ -1,16 +1,25 @@
-# PRTG-DHCP-Stats
-# About
+# PRTG-DHCP-Stats.PS1
 
-## Project Owner:
+<!-- ABOUT THE PROJECT -->
+### About The Project
+Project Owner: Jannos-443
 
-Jannos-443
+PRTG Script to monitor Windows DHCP
 
-## Project Details
+Free and open source: [MIT License](https://github.com/Jannos-443/PRTG-DHCP-Stats/blob/main/LICENSE)
 
-- Monitors DHCP Scopes (PercentageInUse, AddressesFree, AddressesInUse and ReservedAddresses)
-- Monitors DHCP Failover State and Mode
+**Features**
+* PercentageInUse
+* CheckFailOver
+* AddressesFree
+* AddressesInUse
+* ReservedAddress
+* IPv4 and IPv6 Scopes
+* Excludes/Includes
 
-## HOW TO
+
+<!-- GETTING STARTED -->
+## Getting Started
 
 1. Place `PRTG-DHCP-Stats.ps1` under `C:\Program Files (x86)\PRTG Network Monitor\Custom Sensors\EXEXML`
 
@@ -23,41 +32,35 @@ Jannos-443
    ![PRTG-DHCP-Stats](media/dhcp-servertools.png)
 
 5. create a "EXE/Script Advanced" sensor. Choose this script from the dropdown and set at least:
-    + Parameters: -DHCPServer %host or -DHCPServer DHCP-Server
+    + Parameters: -DHCPServer %host or -DHCPServer "YourDHCPServer"
     + Security Context: Use Windows credentials of parent device
-    + User needs "DHCP Users" AD Permission
+    + User needs "DHCP Users" AD Permission!
     + ![PRTG-DHCP-Stats](media/dhcp-group.png)
 
-6. Set the **$IgnorePattern** or **$IgnoreScript** parameter to Exclude DHCP Scopes if needed
-
-7. Set additionally parameter if needed.
-   - "-PercentageInUse" (default = enabled)
-     Shows the percentage of used IP Adresses per scope. 
-   
-   - "-CheckFailOver"
-   Shows DHCP Failover State and Mode. 
-
-   - "-AddressesFree"
-    Shows the Free Addresses per scope. 
-
-   - "-AddressesInUse"
-    Shows the Addresses in Use per scope. 
-
-   - "-ReservedAddress"
-    Shows the Reserved Addresses per scope.
-
+6. Set the **$ExcludeScope** or **$IncludeScope** parameter to Exclude/Include DHCP Scopes if needed
 
 ## Examples
-![PRTG-DHCP-Stats](media/Example_OK.png)
+```powershell
+-DHCPServer "YourDHCPServer" -CheckFailOver -PercentageInUse
+```
+Display Failover and PercentageInUse channels
+![PRTG-DHCP-Stats](media/Example_1.png)
+
+```powershell
+-DHCPServer "YourDHCPServer" -AddressesFree -AddressesInUse
+```
+Display AddressesFree and AddressesInUse channels
+![PRTG-DHCP-Stats](media/Example_2.png)
+
 
 DHCP Scope exceptions
 ------------------
-You can either use the **parameter $IgnorePattern** to exclude a DHCP Scope on sensor basis, or set the **variable $IgnoreScript** within the script. Both variables take a regular expression as input to provide maximum flexibility. These regexes are then evaluated againt the **DHCP Scope ID**
+You can either use the **parameter $ExcludeScope** to exclude a DHCP Scope on sensor basis, or set the **variable $ExcludeScript** within the script. Both variables take a regular expression as input to provide maximum flexibility. These regexes are then evaluated againt the **DHCP Scope ID**
 
-By default, the $IgnoreScript varialbe looks like this:
+By default, the $ExcludeScript varialbe looks like this:
 
 ```powershell
-$IgnoreScript = '^(TestIgnore)$'
+$ExcludeScript = '^(TestIgnore)$'
 ```
 
 For more information about regular expressions in PowerShell, visit [Microsoft Docs](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_regular_expressions).

@@ -42,8 +42,8 @@
     Shows the Reserved Addresses per scope.
     - Default is $false
 
-    .PARAMETER IgnorePattern
-    Regular expression to describe the DHCP Scope ID for Exampe "192.168.2.0"
+    .PARAMETER ExcludeScope
+    Regular expression to Exclude the DHCP Scope ID for Example "192.168.2.0"
      
       Example: ^(192.168.2.0|192.168.3.0)$
 
@@ -51,9 +51,19 @@
 
     #https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_regular_expressions?view=powershell-7.1
 
+    .PARAMETER IncludeScope
+    Regular expression to Include the DHCP Scope ID for Example "192.168.2.0"
+    See ExcludeScope
+
+    .PARAMETER IPv4Scopes
+    Include IPv4 Scopes (default)
+
+    .PARAMETER IPv6Scopes
+    Include IPv6 Scopes
+
     .EXAMPLE
     Sample call from PRTG
-    PRTG-DHCP-Stats.ps1 -DHCPServer "DHCP-Sever.contorso.com" -CheckFailOver -AddressesFree
+    PRTG-DHCP-Stats.ps1 -DHCPServer "DHCP-Server.contorso.com" -CheckFailOver -AddressesFree
 
     .NOTES
     This script is based on the following script https://github.com/sredlin/PRTG/tree/master/DHCP%20Scope
@@ -62,107 +72,62 @@
     https://github.com/Jannos-443/PRTG-DHCP-Stats
 #>
 param(
-[Parameter(Mandatory)] [string]$DHCPServer = $null,
-[switch]$PercentageInUse = $true,
+[string]$DHCPServer = "",
+[switch]$PercentageInUse = $false,
 [switch]$CheckFailOver = $false,
 [switch]$AddressesFree = $false,
 [switch]$AddressesInUse = $false,
 [switch]$ReservedAddress = $false,
-[string]$IgnorePattern = ""
+[string]$ExcludeScope = "",
+[string]$IncludeScope = "",
+[switch]$IPv4Scopes = $false,
+[switch]$IPv6Scopes = $false
 )
 
 #Catch all unhandled Errors
 trap{
-    Write-Error $_.ToString()
-    Write-Error $_.ScriptStackTrace
-
+    $Output = "line:$($_.InvocationInfo.ScriptLineNumber.ToString()) char:$($_.InvocationInfo.OffsetInLine.ToString()) --- message: $($_.Exception.Message.ToString()) --- line: $($_.InvocationInfo.Line.ToString()) "
+    $Output = $Output.Replace("<","")
+    $Output = $Output.Replace(">","")
+    $Output = $Output.Replace("#","")
     Write-Output "<prtg>"
-    Write-Output " <error>1</error>"
-    Write-Output " <text>$($_.ToString())</text>"
+    Write-Output "<error>1</error>"
+    Write-Output "<text>$($Output)</text>"
     Write-Output "</prtg>"
     Exit
 }
 
-#get Scope statistics
-$dhcpScopeStats = Get-DhcpServerv4ScopeStatistics -ComputerName $DHCPServer
+# Error if there's anything going on
+$ErrorActionPreference = "Stop"
 
-#remove excluded Scopes
-# hardcoded list that applies to all hosts
-$IgnoreScript = '^(TestIgnore)$' 
+#Check Input Parameter
 
-#Remove Ignored
-if ($IgnorePattern -ne "") {
-    $dhcpScopeStats = $dhcpScopeStats | where {$_.ScopeID -notmatch $IgnorePattern}  
-}
-
-if ($IgnoreScript -ne "") {
-    $dhcpScopeStats = $dhcpScopeStats | where {$_.ScopeID -notmatch $IgnoreScript}  
-}
-
-$xmlOutput = '<prtg>'
-
-#Check Scope state for each Scope
-foreach ($scope in $dhcpScopeStats)
-{
-    if($PercentageInUse){
-        $xmlOutput = $xmlOutput + "<result>
-        <channel>Scope: $($scope.ScopeId) -PercentageInUse</channel>
-        <value>$([math]::Round($scope.PercentageInUse))</value>
-        <unit>Percent</unit>
-        <limitmode>1</limitmode>
-        <LimitMaxError>95</LimitMaxError>
-        <LimitMaxWarning>90</LimitMaxWarning>
-        <LimitErrorMsg>DHCP Scope is over 95%</LimitErrorMsg>
-        <LimitWarningMsg>DHCP Scope is over 90%</LimitWarningMsg>
-        </result>"
+#Defaul Mode = PercentageInUser
+if(-not ($PercentageInUse -or $CheckFailOver -or $AddressesFree -or $AddressesInUse -or $ReservedAddress))
+    {
+    $PercentageInUse = $true
     }
-    if($AddressesFree){
-        $xmlOutput = $xmlOutput + "<result>
-        <channel>Scope: $($scope.ScopeId)  -AddressesFree</channel>
-        <unit>Custom</unit>
-        <customUnit>IP</customUnit>
-        <mode>Absolute</mode>
-        <showChart>1</showChart>
-        <showTable>1</showTable>
-        <float>0</float>
-        <value>  $($scope.AddressesFree) </value>                           
-        </result>"
-    }
-    if($AddressesInUse){
-        $xmlOutput = $xmlOutput + "<result>
-        <channel>Scope:  $($scope.ScopeId)  -AddressesInUse</channel>
-        <unit>Custom</unit>
-        <customUnit>IP</customUnit>
-        <mode>Absolute</mode>
-        <showChart>1</showChart>
-        <showTable>1</showTable>
-        <float>0</float>
-        <value>  $($scope.AddressesInUse) </value>
-        </result>"
-    }
-    if($ReservedAddress){
-        $xmlOutput = $xmlOutput + "<result>
-        <channel>Scope: $($scope.ScopeId)  -ReservedAddress</channel>
-        <unit>Custom</unit>
-        <customUnit>IP</customUnit>
-        <mode>Absolute</mode
-        ><showChart>1</showChart>
-        <showTable>1</showTable>
-        <float>0</float>
-        <value> $($scope.ReservedAddress) </value>
-        </result>"
-    }
-    
-}
 
+#Default Scopes = IPv4
+if(-not ($IPv4Scopes -or $IPv6Scopes))
+    {
+    $IPv4Scopes = $true
+    }
+
+if($DHCPServer -eq "")
+    {
+    Write-Output "<prtg>"
+    Write-Output "<error>1</error>"
+    Write-Output "<text>You have to set -DHCPServer `"YourDHCPServer`"</text>"
+    Write-Output "</prtg>"
+    Exit
+    }
 
 if($CheckFailOver)
     {
-
     #Check FailOver state
     $DhcpFailOver = Get-DhcpServerv4Failover -ComputerName $DHCPServer
  
-
     #DHCP States:
     #1 = Normal
     #2 = Communication interrupted
@@ -176,7 +141,6 @@ if($CheckFailOver)
         default { $dhcpstate = 0 }
     }
 
-
     #DHCP Modes: 
     #1 = HotStandby
     #2 = LoadBalance
@@ -187,23 +151,110 @@ if($CheckFailOver)
         default { $dhcpmode = 0 }
     }
 
-
-
-    $xmlOutput = $xmlOutput + "<result>        
-            <channel>DHCP Failover Mode</channel>
-            <value>$($dhcpmode)</value>
-            <ValueLookup>dhcp.failover.mode</ValueLookup>
-        </result>
-        <result>
+    $xmlOutput = $xmlOutput + "<result>
             <channel>DHCP Failover State</channel>
             <value>$($dhcpstate)</value>
             <ValueLookup>dhcp.failover.state</ValueLookup>
-        </result>
-    "
-
+            </result>
+            <result>        
+            <channel>DHCP Failover Mode</channel>
+            <value>$($dhcpmode)</value>
+            <ValueLookup>dhcp.failover.mode</ValueLookup>
+            </result>"
     }
+
+
+#Get IPv4 Scope statistics
+if($IPv4Scopes)
+    {
+    $dhcpScopeStats = Get-DhcpServerv4ScopeStatistics -ComputerName $DHCPServer
+    }
+
+#Get IPv6 Scope statistics
+if($IPv6Scopes)
+    {
+    if($null -eq $dhcpScopeStats)
+        {
+        $dhcpScopeStats = Get-DhcpServerv6ScopeStatistics -ComputerName $DHCPServer
+        }
+    else
+        {
+        $dhcpScopeStats += Get-DhcpServerv6ScopeStatistics -ComputerName $DHCPServer
+        }
+    }
+
+#remove excluded Scopes
+# hardcoded list that applies to all hosts
+$ExcludeScript = '^(TestIgnore)$' 
+
+#Exclude Scopes
+if ($ExcludeScope -ne "") {
+    $dhcpScopeStats = $dhcpScopeStats | Where-Object {$_.ScopeID -notmatch $ExcludeScope}
+}
+
+if ($ExcludeScript -ne "") {
+    $dhcpScopeStats = $dhcpScopeStats | Where-Object {$_.ScopeID -notmatch $ExcludeScript}  
+}
+
+#Include Scopes
+if ($IncludeScope -ne "") {
+    $dhcpScopeStats = $dhcpScopeStats | Where-Object {$_.ScopeID -match $IncludeScope}
+}
+
+$xmlOutput = '<prtg>'
+
+#Check Scope state for each Scope
+foreach ($scope in $dhcpScopeStats)
+{
+    if($PercentageInUse){
+        $xmlOutput = $xmlOutput + "<result>
+        <channel>Scope: $($scope.ScopeId) Usage</channel>
+        <value>$([math]::Round($scope.PercentageInUse))</value>
+        <unit>Percent</unit>
+        <limitmode>1</limitmode>
+        <LimitMaxError>95</LimitMaxError>
+        <LimitMaxWarning>90</LimitMaxWarning>
+        <LimitErrorMsg>DHCP Scope is over 95%</LimitErrorMsg>
+        <LimitWarningMsg>DHCP Scope is over 90%</LimitWarningMsg>
+        </result>"
+    }
+    if($AddressesFree){
+        $xmlOutput = $xmlOutput + "<result>
+        <channel>Scope: $($scope.ScopeId) Free</channel>
+        <unit>Count</unit>
+        <mode>Absolute</mode>
+        <showChart>1</showChart>
+        <showTable>1</showTable>
+        <float>0</float>
+        <value>$($scope.AddressesFree)</value>                           
+        </result>"
+    }
+    if($AddressesInUse){
+        $xmlOutput = $xmlOutput + "<result>
+        <channel>Scope: $($scope.ScopeId) Used</channel>
+        <unit>Count</unit>
+        <mode>Absolute</mode>
+        <showChart>1</showChart>
+        <showTable>1</showTable>
+        <float>0</float>
+        <value>$($scope.AddressesInUse)</value>
+        </result>"
+    }
+    if($ReservedAddress){
+        $xmlOutput = $xmlOutput + "<result>
+        <channel>Scope: $($scope.ScopeId) Reserved</channel>
+        <unit>Count</unit>
+        <mode>Absolute</mode>
+        <showChart>1</showChart>
+        <showTable>1</showTable>
+        <float>0</float>
+        <value>$($scope.ReservedAddress)</value>
+        </result>"
+    }
+    
+}
 
 #finish Script - Write Output
 $xmlOutput = $xmlOutput + "</prtg>"
 
-$xmlOutput
+Write-Output $xmlOutput
