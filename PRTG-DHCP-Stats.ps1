@@ -123,6 +123,8 @@ if($DHCPServer -eq "")
     Exit
     }
 
+$xmlOutput = '<prtg>'
+
 if($CheckFailOver)
     {
     #Check FailOver state
@@ -201,7 +203,6 @@ if ($IncludeScope -ne "") {
     $dhcpScopeStats = $dhcpScopeStats | Where-Object {$_.ScopeID -match $IncludeScope}
 }
 
-$xmlOutput = '<prtg>'
 
 #Check Scope state for each Scope
 foreach ($scope in $dhcpScopeStats)
